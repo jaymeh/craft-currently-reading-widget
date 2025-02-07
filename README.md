@@ -1,6 +1,6 @@
 # Currently Reading Widget
 
-Widget which uses various book API's to showcase what you are currently readig.
+Widget which uses various book API's to showcase what you are currently reading.
 
 ## Requirements
 

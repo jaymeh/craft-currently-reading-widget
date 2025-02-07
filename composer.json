@@ -1,6 +1,6 @@
 {
   "name": "jaymeh/craft-currently-reading-widget",
-  "description": "Widget which uses various book API's to showcase what you are currently readig.",
+  "description": "Widget which uses various book API's to showcase what you are currently reading.",
   "type": "craft-plugin",
   "license": "proprietary",
   "support": {

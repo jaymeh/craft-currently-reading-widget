@@ -4,6 +4,7 @@ namespace jaymeh\craftcurrentlyreadingwidget;
 
 use Craft;
 use craft\base\Plugin;
+use jaymeh\craftcurrentlyreadingwidget\services\BookApiService;
 
 /**
  * Currently Reading Widget plugin
@@ -12,6 +13,7 @@ use craft\base\Plugin;
  * @author Jaymeh <contact@jaymeh.co.uk>
  * @copyright Jaymeh
  * @license https://craftcms.github.io/license/ Craft License
+ * @property-read BookApiService $bookApiService
  */
 class CurrentlyReading extends Plugin
 {
@@ -20,9 +22,7 @@ class CurrentlyReading extends Plugin
     public static function config(): array
     {
         return [
-            'components' => [
-                // Define component configs here...
-            ],
+            'components' => ['bookApiService' => BookApiService::class],
         ];
     }
 
@@ -35,7 +35,7 @@ class CurrentlyReading extends Plugin
         // Any code that creates an element query or loads Twig should be deferred until
         // after Craft is fully initialized, to avoid conflicts with other plugins/modules
         Craft::$app->onInit(function() {
-            // ...
+            
         });
     }
 

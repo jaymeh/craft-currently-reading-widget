@@ -48,6 +48,8 @@ class BookApiService extends Component
                 throw new InvalidBookApiException("Invalid API class provided ($api). Please ensure it implements the BookServiceInterface.");
             }
 
+            // Load from config...
+
             $apis[] = new $api();
         }
 

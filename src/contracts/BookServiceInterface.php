@@ -7,4 +7,10 @@ namespace jaymeh\craftcurrentlyreadingwidget\contracts;
  */
 interface BookServiceInterface
 {
+    /**
+     * Returns a list of books currently being read.
+     *
+     * @return Book[]
+     */
+    public function getCurrentlyReading(): array;
 }

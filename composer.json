@@ -43,6 +43,5 @@
       "pestphp/pest-plugin": true,
       "yiisoft/yii2-composer": true
     }
-  },
-  "version": "1.0.0"
+  }
 }

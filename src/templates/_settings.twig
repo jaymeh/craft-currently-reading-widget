@@ -1,0 +1,73 @@
+{# @var plugin \jaymeh\craftcurrentlyreadingwidget #}
+{# @var settings \jaymeh\craftcurrentlyreadingwidget\models\Settings #}
+
+{% extends 'settings/plugins/_settings' %}
+
+{% set tabs = {
+    general: { label: 'General'|t('currently-reading-widget'), url: '#settings-general' },
+    "open-library": { label: 'Open Library'|t('currently-reading-widget'), url: '#settings-open-library' },
+} %}
+
+{% import '_includes/forms.twig' as forms %}
+
+{% macro configWarning(setting) -%}
+    {% set setting = '<code>'~setting~'</code>' %}
+    {{ "This is being overridden by the {setting} config setting in your {file} config file."|t('magic-login', {
+        setting: setting,
+        file: 'currently-reading-widget.php'
+    })|raw }}
+{%- endmacro %}
+{% from _self import configWarning %}
+
+{% block content %}
+
+    {{ actionInput('plugins/save-plugin-settings') }}
+    {{ hiddenInput('pluginHandle', plugin.handle) }}
+
+    {{ redirectInput('settings') }}
+
+    {% namespace 'settings' %}
+        <div id="general">
+                {{ forms.selectizeField({
+                    label: 'Source'|t('currently-reading-widget'),
+                    id: 'source',
+                    name: 'source',
+                    value: settings.getSource(),
+                    options: plugin.getSourceOptions(),
+                    errors: settings.getErrors('source'),
+                    required: true,
+                    includeEnvVars: true,
+                    placeholder: 'Select a source'|t('currently-reading-widget'),
+                    first: true
+                }) }}
+        </div>
+
+        <div id="open-library" class="hidden">
+            {{
+                forms.textField({
+                    label: 'Key'|t('currently-reading-widget'),
+                    id: 'openAPIKey',
+                    name: 'openAPIKey',
+                    value: settings.getOpenAPIKey(),
+                    errors: settings.getErrors('openAPIKey'),
+                    required: true,
+                    includeEnvVars: true,
+                    placeholder: 'Enter your Open Library API key'|t('currently-reading-widget'),
+                })
+            }}
+
+            {{
+                forms.textField({
+                    label: 'Secret'|t('currently-reading-widget'),
+                    id: 'secret',
+                    name: 'openAPISecret',
+                    value: settings.getOpenApiSecret(),
+                    errors: settings.getErrors('openAPISecret'),
+                    required: true,
+                    includeEnvVars: true,
+                    placeholder: 'Enter your Open Library API secret'|t('currently-reading-widget'),
+                })
+            }}
+        </div>
+    {% endnamespace %}
+{% endblock %}

@@ -3,8 +3,11 @@
 namespace jaymeh\craftcurrentlyreadingwidget\services;
 
 use yii\base\Component;
+use jaymeh\craftcurrentlyreadingwidget\CurrentlyReading;
 use jaymeh\craftcurrentlyreadingwidget\events\RegisterBookApiEvent;
 use jaymeh\craftcurrentlyreadingwidget\contracts\BookServiceInterface;
+use jaymeh\craftcurrentlyreadingwidget\services\apis\MockService;
+use jaymeh\craftcurrentlyreadingwidget\services\apis\OpenLibraryService;
 use jaymeh\craftcurrentlyreadingwidget\exceptions\InvalidBookApiException;
 
 /**
@@ -17,7 +20,7 @@ class BookApiService extends Component
      *
      * @var BookServiceInterface
      */
-    protected BookServiceInterface $api;
+    protected ?BookServiceInterface $api = null;
 
     /**
      * Constructor for class.
@@ -30,33 +33,47 @@ class BookApiService extends Component
     /**
      * Get the Book API to use.
      *
+     * @throws InvalidBookApiException If the API is invalid.
+     *
      * @return BookServiceInterface
      */
-    protected function getApi(): BookServiceInterface
+    public function getApi(): BookServiceInterface
     {
-        // Fire off event to allow other plugins to register their own apis.
-        $apis = [];
-
-        $event = new RegisterBookApiEvent(['apis' => $apis]);
-
-        $this->trigger(RegisterBookApiEvent::class, $event);
-
-        // Loop through the apis and validate them.
-        foreach ($event->apis as $api) {
-            if (! $this->_validateApi($api)) {
-                // Throw an exception.
-                throw new InvalidBookApiException("Invalid API class provided ($api). Please ensure it implements the BookServiceInterface.");
-            }
-
-            // Load from config...
-
-            $apis[] = new $api();
+        if ($this->api) {
+            return $this->api;
         }
 
-        // Determine the api to use.
-        return $apis[0];
+        // Fire off event to allow other plugins to register their own apis.
+        $apis = [
+            'mock'        => MockService::class,
+            'openlibrary' => OpenLibraryService::class,
+        ];
 
-        // This could come from configuration or an ENV Variable.
+        $event = new RegisterBookApiEvent(['apis' => $apis]);
+        $this->trigger(RegisterBookApiEvent::class, $event);
+
+        // Initialize all APIs
+        $initializedApis = [];
+        foreach ($event->apis as $key => $api) {
+            if (! $this->_validateApi($api)) {
+                throw new InvalidBookApiException("Invalid API class provided ($api). Please ensure it implements the BookServiceInterface.");
+            }
+            $initializedApis[$key] = new $api();
+        }
+
+        // Load API from settings.
+        $source = CurrentlyReading::getInstance()->getSettings()->getSource();
+        if (! isset($initializedApis[$source])) {
+            throw new InvalidBookApiException("Invalid API source provided ($source). Please ensure it is a valid key in the array.");
+        }
+
+        $this->api = $initializedApis[$source];
+        return $this->api;
+    }
+
+    public function getCurrentlyReading(): array
+    {
+        return $this->getApi()->getCurrentlyReading();
     }
 
     /**

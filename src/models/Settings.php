@@ -25,14 +25,7 @@ class Settings extends Model
      *
      * @var string|null
      */
-    private ?string $_openAPIKey = null;
-
-    /**
-     * Secret Key for Open API.
-     *
-     * @var string|null
-     */
-    private ?string $_openAPISecret = null;
+    private ?string $_personName  = null;
 
     /**
      * {@inheritdoc}
@@ -41,7 +34,7 @@ class Settings extends Model
     {
         $names = parent::attributes();
         $names[] = 'source';
-
+        $names[] = 'personName';
         return $names;
     }
 
@@ -51,7 +44,8 @@ class Settings extends Model
     public function fields(): array
     {
         return [
-            'source' => fn() => $this->getSource(false),
+            'source' => fn () => $this->getSource(false),
+            'personName' => fn () => $this->getPersonName(false),
         ];
     }
 
@@ -72,7 +66,8 @@ class Settings extends Model
      * @param string $value
      * @return void
      */
-    public function setSource(string $value): void {
+    public function setSource(string $value): void
+    {
         $this->_source = $value;
     }
 
@@ -82,40 +77,20 @@ class Settings extends Model
      * @param boolean $parse
      * @return string|null
      */
-    public function getOpenAPIKey($parse = true): ?string
+    public function getPersonName($parse = true): ?string
     {
-        return ($parse ? App::parseEnv($this->_openAPIKey) : $this->_openAPIKey ?? '');
+        return ($parse ? App::parseEnv($this->_personName) : $this->_personName ?? '');
     }
 
     /**
-     * Sets the API source.
+     * Sets the Person name.
      *
      * @param string $value
      * @return void
      */
-    public function setOpenAPIKey(string $value): void {
-        $this->_openAPIKey = $value;
-    }
-
-        /**
-     * Gets the API Source.
-     *
-     * @param boolean $parse
-     * @return string|null
-     */
-    public function getOpenAPISecret($parse = true): ?string
+    public function setPersonName(string $value): void
     {
-        return ($parse ? App::parseEnv($this->_openAPISecret) : $this->_openAPISecret ?? '');
-    }
-
-    /**
-     * Sets the API source.
-     *
-     * @param string $value
-     * @return void
-     */
-    public function setOpenAPISecret(string $value): void {
-        $this->_openAPISecret = $value;
+        $this->_personName = $value;
     }
 
     /**
@@ -126,6 +101,8 @@ class Settings extends Model
         return array_merge(parent::defineRules(), [
             [['source'], 'required'],
             [['source'], 'string'],
+            [['personName'], 'required'],
+            [['personName'], 'string'],
         ]);
     }
 
@@ -139,6 +116,7 @@ class Settings extends Model
                 'class' => EnvAttributeParserBehavior::class,
                 'attributes' => [
                     'source',
+                    'personName',
                 ],
             ],
         ];

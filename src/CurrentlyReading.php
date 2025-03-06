@@ -3,9 +3,15 @@
 namespace jaymeh\craftcurrentlyreadingwidget;
 
 use Craft;
+use craft\web\View;
+use craft\base\Event;
+use yii\base\Event as YiiBaseEvent;
 use craft\base\Model;
 use craft\base\Plugin;
+use craft\web\twig\variables\CraftVariable;
+use craft\events\RegisterTemplateRootsEvent;
 use jaymeh\craftcurrentlyreadingwidget\models\Settings;
+use jaymeh\craftcurrentlyreadingwidget\CurrentlyReading;
 use jaymeh\craftcurrentlyreadingwidget\services\BookApiService;
 
 /**
@@ -37,11 +43,24 @@ class CurrentlyReading extends Plugin
     {
         parent::init();
 
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (YiiBaseEvent $event) {
+                /** @var CraftVariable $variable */
+                $variable = $event->sender;
+                $variable->set('currentlyReadingWidget', function () {
+                    return CurrentlyReading::getInstance();
+                });
+            }
+        );
+
         $this->attachEventHandlers();
+        $this->setTemplateRoots();
 
         // Any code that creates an element query or loads Twig should be deferred until
         // after Craft is fully initialized, to avoid conflicts with other plugins/modules
-        Craft::$app->onInit(function() {
+        Craft::$app->onInit(function () {
         });
     }
 
@@ -52,12 +71,9 @@ class CurrentlyReading extends Plugin
      */
     public function getSourceOptions(): array
     {
-        // TODO: Make this dynamically load from the available APIs.
-
         return [
-            'source'      => '$CURRENTLY_READING_SOURCE_FIELD',
-            'openlibrary' => 'Open Library',
-            'mock'        => 'Mock',
+             'openlibrary' => 'Open Library',
+             'mock'        => 'Mock',
         ];
     }
 
@@ -93,6 +109,17 @@ class CurrentlyReading extends Plugin
             'settings' => $this->getSettings(),
             'overrides' => array_keys($overrides),
         ]);
+    }
+
+    protected function setTemplateRoots()
+    {
+        Event::on(
+            View::class,
+            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
+            function (RegisterTemplateRootsEvent $event) {
+                $event->roots['currently-reading'] = __DIR__ . '/templates/currently-reading';
+            }
+        );
     }
 
     private function attachEventHandlers(): void

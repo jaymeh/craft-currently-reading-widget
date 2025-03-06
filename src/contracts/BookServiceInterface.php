@@ -13,4 +13,8 @@ interface BookServiceInterface
      * @return Book[]
      */
     public function getCurrentlyReading(): array;
+
+    // TODO: Add a label method.
+
+    // TODO: Add a name method.
 }

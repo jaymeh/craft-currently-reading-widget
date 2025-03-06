@@ -10,25 +10,24 @@
 
 {% import '_includes/forms.twig' as forms %}
 
-{% macro configWarning(setting) -%}
-    {% set setting = '<code>'~setting~'</code>' %}
-    {{ "This is being overridden by the {setting} config setting in your {file} config file."|t('magic-login', {
+	{% macro configWarning(setting) -%}
+	{% set setting = '<code>'~setting~'</code>' %}
+{{ "This is being overridden by the {setting} config setting in your {file} config file."|t('magic-login', {
         setting: setting,
         file: 'currently-reading-widget.php'
     })|raw }}
 {%- endmacro %}
 {% from _self import configWarning %}
 
-{% block content %}
+	{% block content %}
 
-    {{ actionInput('plugins/save-plugin-settings') }}
-    {{ hiddenInput('pluginHandle', plugin.handle) }}
+	{{ actionInput('plugins/save-plugin-settings') }}
+	{{ hiddenInput('pluginHandle', plugin.handle) }}
 
-    {{ redirectInput('settings') }}
+	{{ redirectInput('settings') }}
 
-    {% namespace 'settings' %}
-        <div id="general">
-                {{ forms.selectizeField({
+	{% namespace 'settings' %}
+		<div id="general"> {{ forms.selectizeField({
                     label: 'Source'|t('currently-reading-widget'),
                     id: 'source',
                     name: 'source',
@@ -40,34 +39,22 @@
                     placeholder: 'Select a source'|t('currently-reading-widget'),
                     first: true
                 }) }}
-        </div>
+	</div>
 
-        <div id="open-library" class="hidden">
-            {{
+	<div id="open-library" class="hidden">
+		{{
                 forms.textField({
-                    label: 'Key'|t('currently-reading-widget'),
-                    id: 'openAPIKey',
-                    name: 'openAPIKey',
-                    value: settings.getOpenAPIKey(),
-                    errors: settings.getErrors('openAPIKey'),
+                    label: 'Person Name'|t('currently-reading-widget'),
+                    id: 'personName',
+                    name: 'personName',
+                    value: settings.getPersonName(),
+                    errors: settings.getErrors('personName'),
                     required: true,
                     includeEnvVars: true,
-                    placeholder: 'Enter your Open Library API key'|t('currently-reading-widget'),
+                    placeholder: 'Enter your username from openlibrary.org'|t('currently-reading-widget'),
+                    instructions: 'This is the name of the person you want to display the currently reading widget for.'|t('currently-reading-widget'),
                 })
             }}
-
-            {{
-                forms.textField({
-                    label: 'Secret'|t('currently-reading-widget'),
-                    id: 'secret',
-                    name: 'openAPISecret',
-                    value: settings.getOpenApiSecret(),
-                    errors: settings.getErrors('openAPISecret'),
-                    required: true,
-                    includeEnvVars: true,
-                    placeholder: 'Enter your Open Library API secret'|t('currently-reading-widget'),
-                })
-            }}
-        </div>
-    {% endnamespace %}
+	</div>
+	{% endnamespace %}
 {% endblock %}

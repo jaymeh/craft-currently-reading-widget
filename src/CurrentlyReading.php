@@ -43,6 +43,7 @@ class CurrentlyReading extends Plugin
     {
         parent::init();
 
+        // TODO: There has to be a better way to do this.
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,

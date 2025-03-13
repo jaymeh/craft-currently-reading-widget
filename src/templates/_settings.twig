@@ -42,6 +42,9 @@
 	</div>
 
 	<div id="open-library" class="hidden">
+        <p>
+            {{ 'For this functionality to work, you need to ensure that the currently reading list is public andprovide the name of the person you want to display the currently reading widget for.'|t('currently-reading-widget') }}
+        </p>
 		{{
                 forms.textField({
                     label: 'Person Name'|t('currently-reading-widget'),

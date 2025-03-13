@@ -6,8 +6,8 @@ use yii\base\Component;
 use jaymeh\craftcurrentlyreadingwidget\CurrentlyReading;
 use jaymeh\craftcurrentlyreadingwidget\events\RegisterBookApiEvent;
 use jaymeh\craftcurrentlyreadingwidget\contracts\BookServiceInterface;
-use jaymeh\craftcurrentlyreadingwidget\services\apis\MockService;
-use jaymeh\craftcurrentlyreadingwidget\services\apis\OpenLibraryService;
+use jaymeh\craftcurrentlyreadingwidget\apis\MockApi;
+use jaymeh\craftcurrentlyreadingwidget\apis\OpenLibraryApi;
 use jaymeh\craftcurrentlyreadingwidget\exceptions\InvalidBookApiException;
 
 /**
@@ -45,8 +45,8 @@ class BookApiService extends Component
 
         // Fire off event to allow other plugins to register their own apis.
         $apis = [
-            'mock'        => MockService::class,
-            'openlibrary' => OpenLibraryService::class,
+            'mock'        => MockApi::class,
+            'openlibrary' => OpenLibraryApi::class,
         ];
 
         $event = new RegisterBookApiEvent(['apis' => $apis]);

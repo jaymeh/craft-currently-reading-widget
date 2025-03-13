@@ -1,0 +1,22 @@
+{% do view.registerAssetBundle("jaymeh\\craftcurrentlyreadingwidget\\assetbundles\\SliderAssetBundle") %}
+
+{% set books = craft.currentlyReadingWidget.bookApiService.getCurrentlyReading() %}
+
+<div class="currently-reading-widget__slider-container">
+	<div class="currently-reading-widget__slider">
+		{% for book in books %}
+			<div class="currently-reading-widget__slider-book-container">
+				<div class="currently-reading-widget__slider-book">
+					<div class="currently-reading-widget__slider-book-image-container">
+						<img class="currently-reading-widget__slider-book-image" src="{{ book.coverImageUrl }}" alt="Cover image for {{ book.title }}">
+					</div>
+					<div class="currently-reading-widget__slider-book-content">
+						<p class="currently-reading-widget__slider-book-status">{{ 'Currently Reading'|t }}</p>
+						<h3 class="currently-reading-widget__slider-book-title">{{ book.title }}</h3>
+						<p class="currently-reading-widget__slider-book-author">{{ book.author }}</p>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>

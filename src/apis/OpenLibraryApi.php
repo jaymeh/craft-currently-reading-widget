@@ -2,34 +2,43 @@
 
 namespace jaymeh\craftcurrentlyreadingwidget\apis;
 
+use GuzzleHttp\Client;
+use jaymeh\craftcurrentlyreadingwidget\data\Book;
+use jaymeh\craftcurrentlyreadingwidget\CurrentlyReading;
 use jaymeh\craftcurrentlyreadingwidget\contracts\BookServiceInterface;
 
 class OpenLibraryApi implements BookServiceInterface
 {
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        // Constructor logic here.
-    }
-
-    // Display name...
-    public function getName(): string
-    {
-        return 'Open Library';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrentlyReading(): array
     {
-        return [];
+        $client = new Client();
+        $response = $client->get($this->getPersonCurrentlyReadingUrl());
+
+        $data = json_decode($response->getBody(), true);
+
+        foreach ($data['reading_log_entries'] as $entry) {
+            $books[] = new Book(
+                $entry['work']['title'],
+                implode(', ', $entry['work']['author_names']),
+                $this->getCoverImageUrl($entry['work']['cover_id'])
+            );
+        }
+
+        return $books;
     }
 
-    private function authenticate()
+    protected function getPersonCurrentlyReadingUrl(): string
     {
-        // Authentication logic here.
+        return 'https://openlibrary.org/people/' . $this->getPersonName() . '/books/currently-reading.json';
+    }
+
+    protected function getPersonName(): string
+    {
+        return CurrentlyReading::getInstance()->getSettings()->getPersonName();
+    }
+
+    protected function getCoverImageUrl(string $coverId): string
+    {
+        return 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg';
     }
 }

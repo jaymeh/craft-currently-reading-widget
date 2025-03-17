@@ -10,7 +10,6 @@ class SlickAssetBundle extends AssetBundle
     public function init()
     {
         $this->depends = [
-            CpAsset::class,
             JqueryAsset::class,
         ];
 
@@ -22,7 +21,7 @@ class SlickAssetBundle extends AssetBundle
 
         $this->css = [
             'https://cdn.jsdelivr.net/npm/@accessible360/accessible-slick@1.0.1/slick/slick.min.css',
-            'https://cdn.jsdelivr.net/npm/@accessible360/accessible-slick@1.0.1/slick/accessible-slick-theme.min.css'
+            'https://cdn.jsdelivr.net/npm/@accessible360/accessible-slick@1.0.1/slick/accessible-slick-theme.min.css',
         ];
 
         parent::init();

@@ -11,5 +11,5 @@ class RegisterBookApiEvent extends Event
      *
      * @var string[]
      */
-    public array $apis;
+    public array $apis = [];
 }

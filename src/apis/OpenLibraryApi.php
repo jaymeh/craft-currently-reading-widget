@@ -9,6 +9,9 @@ use jaymeh\craftcurrentlyreadingwidget\contracts\BookServiceInterface;
 
 class OpenLibraryApi implements BookServiceInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getCurrentlyReading(): array
     {
         $client = new Client();
@@ -27,16 +30,48 @@ class OpenLibraryApi implements BookServiceInterface
         return $books;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getLabel(): string
+    {
+        return 'Open Library';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return 'openlibrary';
+    }
+
+    /**
+     * Get the URL for the person's currently reading list
+     * 
+     * @return string
+     */
     protected function getPersonCurrentlyReadingUrl(): string
     {
         return 'https://openlibrary.org/people/' . $this->getPersonName() . '/books/currently-reading.json';
     }
 
+    /**
+     * Get the person's name
+     * 
+     * @return string
+     */
     protected function getPersonName(): string
     {
         return CurrentlyReading::getInstance()->getSettings()->getPersonName();
     }
 
+    /**
+     * Get the URL for the cover image
+     *
+     * @param string $coverId
+     * @return string
+     */
     protected function getCoverImageUrl(string $coverId): string
     {
         return 'https://covers.openlibrary.org/b/id/' . $coverId . '-M.jpg';

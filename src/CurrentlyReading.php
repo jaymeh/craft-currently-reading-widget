@@ -5,14 +5,16 @@ namespace jaymeh\craftcurrentlyreadingwidget;
 use Craft;
 use craft\web\View;
 use craft\base\Event;
-use yii\base\Event as YiiBaseEvent;
 use craft\base\Model;
 use craft\base\Plugin;
+use yii\base\Event as YiiBaseEvent;
 use craft\web\twig\variables\CraftVariable;
 use craft\events\RegisterTemplateRootsEvent;
+use jaymeh\craftcurrentlyreadingwidget\apis\MockApi;
 use jaymeh\craftcurrentlyreadingwidget\models\Settings;
-use jaymeh\craftcurrentlyreadingwidget\CurrentlyReading;
+use jaymeh\craftcurrentlyreadingwidget\apis\OpenLibraryApi;
 use jaymeh\craftcurrentlyreadingwidget\services\BookApiService;
+use jaymeh\craftcurrentlyreadingwidget\events\RegisterBookApiEvent;
 
 /**
  * Currently Reading Widget plugin
@@ -27,15 +29,31 @@ use jaymeh\craftcurrentlyreadingwidget\services\BookApiService;
  */
 class CurrentlyReading extends Plugin
 {
+    /**
+     * Version of the plugin.
+     *
+     * @var string
+     */
     public string $schemaVersion = '1.0.0';
 
-    /** @var bool Whether the plugin has a settings page in the control panel */
+    /**
+     * Whether the plugin has a control panel settings page.
+     *
+     * @var boolean
+     */
     public bool $hasCpSettings = true;
 
+    /**
+     * The components of the plugin.
+     *
+     * @return array
+     */
     public static function config(): array
     {
         return [
-            'components' => ['bookApiService' => BookApiService::class],
+            'components' => [
+                'bookApiService' => BookApiService::class,
+            ],
         ];
     }
 
@@ -43,26 +61,8 @@ class CurrentlyReading extends Plugin
     {
         parent::init();
 
-        // TODO: There has to be a better way to do this.
-        Event::on(
-            CraftVariable::class,
-            CraftVariable::EVENT_INIT,
-            function (YiiBaseEvent $event) {
-                /** @var CraftVariable $variable */
-                $variable = $event->sender;
-                $variable->set('currentlyReadingWidget', function () {
-                    return CurrentlyReading::getInstance();
-                });
-            }
-        );
-
         $this->attachEventHandlers();
         $this->setTemplateRoots();
-
-        // Any code that creates an element query or loads Twig should be deferred until
-        // after Craft is fully initialized, to avoid conflicts with other plugins/modules
-        Craft::$app->onInit(function () {
-        });
     }
 
     /**
@@ -72,10 +72,15 @@ class CurrentlyReading extends Plugin
      */
     public function getSourceOptions(): array
     {
-        return [
-             'openlibrary' => 'Open Library',
-             'mock'        => 'Mock',
-        ];
+        // Get all the apis.
+        $apis = $this->bookApiService->getApis();
+
+        return array_map(function ($api) {
+            return [
+                'label' => $api->getLabel(),
+                'value' => $api->getName(),
+            ];
+        }, $apis);
     }
 
     /**
@@ -112,6 +117,11 @@ class CurrentlyReading extends Plugin
         ]);
     }
 
+    /**
+     * Sets the template roots.
+     *
+     * @return void
+     */
     protected function setTemplateRoots()
     {
         Event::on(
@@ -123,9 +133,36 @@ class CurrentlyReading extends Plugin
         );
     }
 
+    /**
+     * Attaches the event handlers.
+     *
+     * @return void
+     */
     private function attachEventHandlers(): void
     {
         // Register event handlers here ...
         // (see https://craftcms.com/docs/5.x/extend/events.html to get started)
+        // TODO: There has to be a better way to do this.
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (YiiBaseEvent $event) {
+                /** @var CraftVariable $variable */
+                $variable = $event->sender;
+                $variable->set('currentlyReadingWidget', function () {
+                    return CurrentlyReading::getInstance();
+                });
+            }
+        );
+        
+        // Register the event handlers for the book API service.
+        Event::on(
+            BookApiService::class,
+            BookApiService::EVENT_REGISTER_BOOK_API,
+            function (RegisterBookApiEvent $event) {
+                $event->apis['mock'] = MockApi::class;
+                $event->apis['openlibrary'] = OpenLibraryApi::class;
+            }
+        );
     }
 }

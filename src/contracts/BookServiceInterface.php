@@ -14,7 +14,17 @@ interface BookServiceInterface
      */
     public function getCurrentlyReading(): array;
 
-    // TODO: Add a label method.
+    /**
+     * Get the label for the book service. This will be used to identify the book service in the settings.
+     *
+     * @return string
+     */
+    public function getLabel(): string;
 
-    // TODO: Add a name method.
+    /**
+     * Get the name for the book service. This will be used as the key for the book service.
+     *
+     * @return string
+     */
+    public function getName(): string;
 }

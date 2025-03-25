@@ -1,24 +1,35 @@
-# Creates a new GitHub Release whenever the Craft Plugin Store
-# is notified of a new version tag.
-
 name: Create Release
-run-name: Create release for ${{ github.event.client_payload.version }}
 
-on:
-  repository_dispatch:
-    types:
-      - craftcms/new-release
+on: 
+  workflow_dispatch:
+    branches: 
+      - 1.x
 
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     steps:
-      - uses: ncipollo/release-action@v1
-        with:
-          body: ${{ github.event.client_payload.notes }}
-          makeLatest: ${{ github.event.client_payload.latest }}
-          name: ${{ github.event.client_payload.version }}
-          prerelease: ${{ github.event.client_payload.prerelease }}
-          tag: ${{ github.event.client_payload.tag }}
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: none
+
+    - name: Install dependencies
+      run: composer update --prefer-dist --no-interaction
+
+    - name: Setup Commit User
+      run: |
+        git config --local user.email "jaymeh@users.noreply.github.com"
+        git config --local user.name "Jaymeh Sykes"
+
+    - name: Push Release
+      run: |
+        composer run-script release
+        git push --tags origin HEAD

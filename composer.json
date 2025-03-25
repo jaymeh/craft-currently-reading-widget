@@ -13,6 +13,7 @@
   "require-dev": {
     "craftcms/ecs": "dev-main",
     "craftcms/phpstan": "dev-main",
+    "marcocesarato/php-conventional-changelog": "^1.17",
     "markhuot/craft-pest-core": "^2.0"
   },
   "autoload": {
@@ -31,7 +32,11 @@
     "check-cs": "ecs check --ansi",
     "fix-cs": "ecs check --ansi --fix",
     "phpstan": "phpstan --memory-limit=1G",
-    "test": "vendor/bin/pest"
+    "test": "vendor/bin/pest",
+    "release": "php vendor/bin/conventional-changelog --commit",
+    "release:patch": "php vendor/bin/conventional-changelog --patch --commit",
+    "release:minor": "php vendor/bin/conventional-changelog --minor --commit",
+    "release:major": "php vendor/bin/conventional-changelog --major --commit"
   },
   "config": {
     "sort-packages": true,

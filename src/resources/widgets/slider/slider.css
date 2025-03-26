@@ -1,3 +1,7 @@
+.currently-reading-widget__slider-container {
+    padding-left: 25px;
+}
+
 .currently-reading-widget__slider-book {
     display: flex;
     flex-direction: row;

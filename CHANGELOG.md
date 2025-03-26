@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## 1.0.3 - 2025-03-26
+
+### Documentation
+
+* Change reference to MIT License (ce0ad0)
+
 ## 1.0.2 - 2025-03-26
 
 ### Continuous Integrations

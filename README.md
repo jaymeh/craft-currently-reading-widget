@@ -97,4 +97,4 @@ For support, please open an issue in the GitHub repository or contact the plugin
 
 ## License
 
-This plugin is licensed under the MIT License.
+This plugin is licensed under the Craft License.

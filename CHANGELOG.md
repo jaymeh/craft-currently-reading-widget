@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## 1.0.4 - 2025-03-26
+
+### Bug Fixes
+
+* Fixes an issue where previous slide button is cut off. (c4a5b6)
+
 ## 1.0.3 - 2025-03-26
 
 ### Documentation

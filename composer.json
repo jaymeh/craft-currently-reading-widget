@@ -48,5 +48,5 @@
             "yiisoft/yii2-composer": true
         }
     },
-    "version": "1.0.3"
+    "version": "1.0.4"
 }

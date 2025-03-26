@@ -4,4 +4,6 @@ return [
     'disableLinks' => true,
     'changelogVersionFormat' => '## {{version}} - {{date}}',
     'hiddenVersionSeparator' => true,
+    'types' => [], // Types to include in changelog.
+    'ignoreTypes' => ['build', 'chore', 'revert'],
 ];
